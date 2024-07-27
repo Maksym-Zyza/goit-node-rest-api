@@ -7,20 +7,20 @@ const contactsPath = path.resolve("db", "contacts.json");
 const updateContacts = (contacts) =>
   fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 
-export async function listContacts() {
+async function listContacts() {
   const data = await fs.readFile(contactsPath);
 
   return JSON.parse(data);
 }
 
-export async function getContactById(contactId) {
+async function getContactById(contactId) {
   const contacts = await listContacts();
   const result = contacts.find((contact) => contact.id === contactId);
 
   return result || null;
 }
 
-export async function removeContact(contactId) {
+async function removeContact(contactId) {
   const contacts = await listContacts();
   const index = contacts.findIndex((contact) => contact.id === contactId);
   if (index === -1) return null;
@@ -31,7 +31,7 @@ export async function removeContact(contactId) {
   return result;
 }
 
-export async function addContact(data) {
+async function addContact(data) {
   const contacts = await listContacts();
   const newContact = {
     id: nanoid(),
@@ -43,7 +43,7 @@ export async function addContact(data) {
   return newContact;
 }
 
-export async function putContact(contactId, data) {
+async function updateContact(contactId, data) {
   const contacts = await listContacts();
   const index = contacts.findIndex((contact) => contact.id === contactId);
   if (index === -1) return null;
@@ -53,3 +53,11 @@ export async function putContact(contactId, data) {
 
   return contacts[index];
 }
+
+export default {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateContact,
+};
