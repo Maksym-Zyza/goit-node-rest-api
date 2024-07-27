@@ -43,7 +43,7 @@ export async function addContact(data) {
   return newContact;
 }
 
-export async function updateContact(contactId, data) {
+export async function putContact(contactId, data) {
   const contacts = await listContacts();
   const index = contacts.findIndex((contact) => contact.id === contactId);
   if (index === -1) return null;
