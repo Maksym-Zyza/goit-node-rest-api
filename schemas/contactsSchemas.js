@@ -5,12 +5,13 @@ export const createContactSchema = Joi.object({
   email: Joi.string()
     .email({
       minDomainSegments: 2,
-      tlds: { allow: ["com", "net"] },
+      tlds: { allow: ["com", "net", "org", "uk"] },
     })
     .required(),
   phone: Joi.string()
     .pattern(/^\(\d{3}\) \d{3}-\d{4}$/)
     .required(),
+  favorite: Joi.boolean(),
 });
 
 export const updateContactSchema = Joi.object({
@@ -20,4 +21,9 @@ export const updateContactSchema = Joi.object({
     tlds: { allow: ["com", "net"] },
   }),
   phone: Joi.string().pattern(/^\(\d{3}\) \d{3}-\d{4}$/),
+  favorite: Joi.boolean(),
+});
+
+export const updateFavoriteSchema = Joi.object({
+  favorite: Joi.boolean().required(),
 });
