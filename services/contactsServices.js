@@ -1,58 +1,46 @@
-import fs from "fs/promises";
-import path from "path";
-import { nanoid } from "nanoid";
+import User from "../db/models/contacts.js";
+import { where } from "sequelize";
 
-const contactsPath = path.resolve("db", "contacts.json");
+const listContacts = () => User.findAll({ order: [["id", "desc"]] });
 
-const updateContacts = (contacts) =>
-  fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+const addContact = (data) => User.create(data);
 
-async function listContacts() {
-  const data = await fs.readFile(contactsPath);
+const getContactById = (id) => User.findByPk(id);
 
-  return JSON.parse(data);
-}
+const updateContact = async (id, data) => {
+  await User.update(data, {
+    where: {
+      id,
+    },
+  });
 
-async function getContactById(contactId) {
-  const contacts = await listContacts();
-  const result = contacts.find((contact) => contact.id === contactId);
+  return await getContactById(id);
+};
 
-  return result || null;
-}
+const updateStatusContact = async (id, { favorite }) => {
+  await User.update(
+    { favorite },
+    {
+      where: {
+        id,
+      },
+    }
+  );
 
-async function removeContact(contactId) {
-  const contacts = await listContacts();
-  const index = contacts.findIndex((contact) => contact.id === contactId);
-  if (index === -1) return null;
+  return await getContactById(id);
+};
 
-  const [result] = contacts.splice(index, 1);
-  await updateContacts(contacts);
+const removeContact = async (id) => {
+  const contact = await getContactById(id);
 
-  return result;
-}
+  User.destroy({
+    where: {
+      id,
+    },
+  });
 
-async function addContact(data) {
-  const contacts = await listContacts();
-  const newContact = {
-    id: nanoid(),
-    ...data,
-  };
-  contacts.push(newContact);
-  await updateContacts(contacts);
-
-  return newContact;
-}
-
-async function updateContact(contactId, data) {
-  const contacts = await listContacts();
-  const index = contacts.findIndex((contact) => contact.id === contactId);
-  if (index === -1) return null;
-
-  contacts[index] = { ...contacts[index], ...data };
-  await updateContacts(contacts);
-
-  return contacts[index];
-}
+  return contact;
+};
 
 export default {
   listContacts,
@@ -60,4 +48,5 @@ export default {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 };

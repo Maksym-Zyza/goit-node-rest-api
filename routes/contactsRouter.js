@@ -8,10 +8,12 @@ import validateBody from "../decorators/validateBody.js";
 import {
   createContactSchema,
   updateContactSchema,
+  updateFavoriteSchema,
 } from "../schemas/contactsSchemas.js";
 
 const addContactMiddleware = validateBody(createContactSchema);
 const updateContactMiddleware = validateBody(updateContactSchema);
+const updateStatusSchema = validateBody(updateFavoriteSchema);
 
 contactsRouter.get("/", contactsController.getAllContacts);
 
@@ -29,6 +31,12 @@ contactsRouter.put(
   "/:id",
   updateContactMiddleware,
   contactsController.updateContact
+);
+
+contactsRouter.patch(
+  "/:id/favorite",
+  updateStatusSchema,
+  contactsController.updateStatusContact
 );
 
 export default contactsRouter;

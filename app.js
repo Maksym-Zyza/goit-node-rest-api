@@ -21,11 +21,14 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
+const { PORT } = process.env;
+const port = Number(PORT);
+
 try {
   await sequelize.authenticate();
   console.log("Database connection successful");
 
-  app.listen(3000, () => {
+  app.listen(port, () => {
     console.log("Server is running on port: 3000");
   });
 } catch (error) {
