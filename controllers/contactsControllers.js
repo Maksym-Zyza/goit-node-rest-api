@@ -35,6 +35,11 @@ const createContact = async (req, res) => {
 
 const updateContact = async (req, res) => {
   const { id } = req.params;
+
+  if (Object.keys(req.body).length === 0) {
+    throw HttpError(400, "Request body cannot be empty");
+  }
+
   const result = await contactsServices.updateContact(id, req.body);
   if (!result) {
     throw HttpError(404, `Contact with id=${id} not found`);
@@ -45,6 +50,11 @@ const updateContact = async (req, res) => {
 
 const updateStatusContact = async (req, res) => {
   const { id } = req.params;
+
+  if (Object.keys(req.body).length === 0) {
+    throw HttpError(400, "Request body cannot be empty");
+  }
+
   const result = await contactsServices.updateStatusContact(id, req.body);
   if (!result) {
     throw HttpError(404, `Contact with id=${id} not found`);
