@@ -1,42 +1,33 @@
 import User from "../db/models/contacts.js";
 import { where } from "sequelize";
 
-const listContacts = () => User.findAll({ order: [["id", "desc"]] });
+const listContacts = (query = {}) =>
+  User.findAll({
+    order: [["id", "desc"]],
+    where: query,
+  });
 
 const addContact = (data) => User.create(data);
 
-const getContactById = (id) => User.findByPk(id);
+const getContact = (query) => User.findOne({ where: query });
 
-const updateContact = async (id, data) => {
-  await User.update(data, {
-    where: {
-      id,
-    },
-  });
+const updateContact = async (query, data) => {
+  await User.update(data, { where: query });
 
-  return await getContactById(id);
+  return await getContact(query);
 };
 
-const updateStatusContact = async (id, { favorite }) => {
-  await User.update(
-    { favorite },
-    {
-      where: {
-        id,
-      },
-    }
-  );
+const updateStatusContact = async (query, { favorite }) => {
+  await User.update({ favorite }, { where: query });
 
-  return await getContactById(id);
+  return await getContact(query);
 };
 
-const removeContact = async (id) => {
-  const contact = await getContactById(id);
+const removeContact = async (query) => {
+  const contact = await getContact(query);
 
   User.destroy({
-    where: {
-      id,
-    },
+    where: query,
   });
 
   return contact;
@@ -44,7 +35,7 @@ const removeContact = async (id) => {
 
 export default {
   listContacts,
-  getContactById,
+  getContact,
   removeContact,
   addContact,
   updateContact,

@@ -11,9 +11,13 @@ import {
   updateFavoriteSchema,
 } from "../schemas/contactsSchemas.js";
 
+import authenticate from "../middlewares/authenticate.js";
+
 const addContactMiddleware = validateBody(createContactSchema);
 const updateContactMiddleware = validateBody(updateContactSchema);
 const updateStatusSchema = validateBody(updateFavoriteSchema);
+
+contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsController.getAllContacts);
 
