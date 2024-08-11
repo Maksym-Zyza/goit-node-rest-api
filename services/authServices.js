@@ -1,8 +1,11 @@
+import bcrypt from "bcrypt";
 import Users from "../db/models/users.js";
 
 export const signup = async (data) => {
   try {
-    const newUser = await Users.create(data);
+    const { password } = data;
+    const hashPassword = await bcrypt.hash(password, 10);
+    const newUser = await Users.create({ ...data, password: hashPassword });
 
     return newUser;
   } catch (error) {
