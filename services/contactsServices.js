@@ -1,10 +1,12 @@
 import User from "../db/models/contacts.js";
 import { where } from "sequelize";
 
-const listContacts = (query = {}) =>
+const listContacts = (query = {}, { page, limit }) =>
   User.findAll({
-    order: [["id", "desc"]],
     where: query,
+    order: [["id", "desc"]],
+    limit: Number(limit),
+    offset: Number(page - 1) * Number(limit),
   });
 
 const addContact = (data) => User.create(data);

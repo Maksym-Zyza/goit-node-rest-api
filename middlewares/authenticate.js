@@ -25,11 +25,15 @@ const authenticate = async (req, res, next) => {
       next(HttpError(401, "User not found"));
     }
 
+    if (!user.token || user.token !== token) {
+      return next(HttpError(401, "Not authorized"));
+    }
+
     req.user = user;
 
     next();
   } catch (error) {
-    next(HttpError(401, "Not authorized"));
+    next(HttpError(401, error.message));
   }
 };
 

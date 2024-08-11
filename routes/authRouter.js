@@ -18,4 +18,6 @@ authRouter.post("/login", singUpMiddleware, authController.login);
 
 authRouter.post("/current", authenticate, authController.getCurrent);
 
+authRouter.post("/logout", authenticate, authController.logout);
+
 export default authRouter;

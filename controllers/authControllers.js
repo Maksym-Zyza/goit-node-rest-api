@@ -30,12 +30,17 @@ const login = async (req, res) => {
     throw HttpError(401, "Email or password is wrong");
   }
 
+  const { id } = user;
+
   const payload = {
-    id: user.id,
+    id,
   };
 
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" });
+  await authServices.updateUser({ id }, { token });
+
   res.status(200).json({
-    token: jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" }),
+    token,
     user: {
       email,
       subscription: user.subscription,
@@ -49,8 +54,18 @@ const getCurrent = async (req, res) => {
   res.status(200).json({ email, subscription });
 };
 
+const logout = async (req, res) => {
+  const { id } = req.user;
+  await authServices.updateUser({ id }, { token: null });
+
+  res.status(204).json({
+    message: "",
+  });
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
+  logout: ctrlWrapper(logout),
 };

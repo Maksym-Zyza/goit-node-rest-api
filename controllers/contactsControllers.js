@@ -4,7 +4,11 @@ import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
 const getAllContacts = async (req, res) => {
   const { id: owner } = req.user;
-  const result = await contactsServices.listContacts({ owner });
+  const { page = 1, limit = 10 } = req.query;
+  const result = await contactsServices.listContacts(
+    { owner },
+    { page, limit }
+  );
   res.json(result);
 };
 
