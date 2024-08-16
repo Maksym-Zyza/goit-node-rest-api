@@ -8,11 +8,13 @@ const { JWT_SECRET } = process.env;
 
 const register = async (req, res) => {
   const newUser = await authServices.register(req.body);
-  const { email, subscription } = newUser;
+
+  const { email, subscription, avatarURL } = newUser;
 
   res.status(201).json({
     email,
     subscription,
+    avatarURL,
   });
 };
 

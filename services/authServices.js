@@ -1,13 +1,20 @@
 import bcrypt from "bcrypt";
 import Users from "../db/models/users.js";
+import gravatar from "gravatar";
 
 export const findUser = (query) => Users.findOne({ where: query });
 
 export const register = async (data) => {
   try {
-    const { password } = data;
+    const { password, email } = data;
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await Users.create({ ...data, password: hashPassword });
+    const avatar = gravatar.url(email, { s: "200", r: "pg", d: "mm" });
+
+    const newUser = await Users.create({
+      ...data,
+      password: hashPassword,
+      avatarURL: avatar,
+    });
 
     return newUser;
   } catch (error) {
