@@ -3,6 +3,8 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import fs from "fs/promises";
+import path from "path";
 
 const { JWT_SECRET } = process.env;
 
@@ -65,9 +67,26 @@ const logout = async (req, res) => {
   });
 };
 
+const updateAvatar = async (req, res) => {
+  const { id } = req.user;
+  const { path: oldPath, filename } = req.file;
+
+  const avatarPath = path.resolve("public", "avatars");
+  const newPath = path.join(avatarPath, filename);
+
+  await fs.rename(oldPath, newPath);
+
+  const avatar = path.join("public", "avatars", filename);
+  const avatarURL = { avatarURL: avatar };
+  await authServices.updateUser({ id }, avatarURL);
+
+  res.json(avatarURL);
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };

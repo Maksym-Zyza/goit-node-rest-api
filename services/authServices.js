@@ -8,12 +8,12 @@ export const register = async (data) => {
   try {
     const { password, email } = data;
     const hashPassword = await bcrypt.hash(password, 10);
-    const avatar = gravatar.url(email, { s: "200", r: "pg", d: "mm" });
+    const avatarURL = gravatar.url(email, { s: "200", r: "pg", d: "mm" });
 
     const newUser = await Users.create({
       ...data,
       password: hashPassword,
-      avatarURL: avatar,
+      avatarURL,
     });
 
     return newUser;
