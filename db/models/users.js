@@ -29,6 +29,13 @@ const Users = sequelize.define("users", {
     defaultValue: null,
   },
   avatarURL: DataTypes.STRING,
+  verify: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  verificationToken: {
+    type: DataTypes.STRING,
+  },
 });
 
 export default Users;

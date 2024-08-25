@@ -28,6 +28,10 @@ const login = async (req, res) => {
     throw HttpError(401, "Email or password is wrong");
   }
 
+  if (!user.verify) {
+    throw HttpError(401, "Email not verify");
+  }
+
   const comparePassword = await bcrypt.compare(password, user.password);
 
   if (!comparePassword) {
@@ -76,11 +80,29 @@ const updateAvatar = async (req, res) => {
 
   await fs.rename(oldPath, newPath);
 
-  const avatar = path.join("public", "avatars", filename);
+  const avatar = path.join("avatars", filename);
   const avatarURL = { avatarURL: avatar };
   await authServices.updateUser({ id }, avatarURL);
 
   res.json(avatarURL);
+};
+
+const verify = async (req, res) => {
+  const { verificationToken } = req.params;
+  const user = await authServices.findUser({ verificationToken });
+
+  if (!user) {
+    throw HttpError(404, "User not found or already verify");
+  }
+
+  await authServices.updateUser(
+    { verificationToken },
+    { verify: true, verificationToken: null }
+  );
+
+  res.json({
+    message: "Verification successful",
+  });
 };
 
 export default {
@@ -89,4 +111,5 @@ export default {
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
   updateAvatar: ctrlWrapper(updateAvatar),
+  verify: ctrlWrapper(verify),
 };
