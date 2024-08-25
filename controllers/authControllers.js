@@ -105,6 +105,21 @@ const verify = async (req, res) => {
   });
 };
 
+const resendVerification = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await authServices.findUser({ email });
+  const { verificationToken, verify } = user;
+
+  if (verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  authServices.sendVerifyEmail(email, verificationToken);
+
+  res.json({ message: "Verification email sent" });
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
@@ -112,4 +127,5 @@ export default {
   logout: ctrlWrapper(logout),
   updateAvatar: ctrlWrapper(updateAvatar),
   verify: ctrlWrapper(verify),
+  resendVerification: ctrlWrapper(resendVerification),
 };

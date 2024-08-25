@@ -8,6 +8,16 @@ const { BASE_URL } = process.env;
 
 export const findUser = (query) => Users.findOne({ where: query });
 
+export const sendVerifyEmail = (email, verificationCode) => {
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}">Click to verify email</a>`,
+  };
+
+  return sendEmail(verifyEmail);
+};
+
 export const register = async (data) => {
   try {
     const { password, email } = data;
@@ -22,13 +32,7 @@ export const register = async (data) => {
       avatarURL,
     });
 
-    const verifyEmail = {
-      to: email,
-      subject: "Verify email",
-      html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">Click to verify email</a>`,
-    };
-
-    await sendEmail(verifyEmail);
+    sendVerifyEmail(email, verificationToken);
 
     return newUser;
   } catch (error) {

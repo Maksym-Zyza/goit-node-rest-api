@@ -4,13 +4,14 @@ import authController from "../controllers/authControllers.js";
 
 import validateBody from "../decorators/validateBody.js";
 
-import { authSignupSchema } from "../schemas/authSchemas.js";
+import { authSignupSchema, authVerifySchema } from "../schemas/authSchemas.js";
 
 import authenticate from "../middlewares/authenticate.js";
 
 import upload from "../middlewares/upload.js";
 
 const singUpMiddleware = validateBody(authSignupSchema);
+const verifyMiddleware = validateBody(authVerifySchema);
 
 const authRouter = Router();
 
@@ -30,5 +31,7 @@ authRouter.patch(
 );
 
 authRouter.get("/verify/:verificationToken", authController.verify);
+
+authRouter.post("/verify", verifyMiddleware, authController.resendVerification);
 
 export default authRouter;
