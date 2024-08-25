@@ -107,8 +107,12 @@ const verify = async (req, res) => {
 
 const resendVerification = async (req, res) => {
   const { email } = req.body;
-
   const user = await authServices.findUser({ email });
+
+  if (!user) {
+    throw HttpError(400, "User not found");
+  }
+
   const { verificationToken, verify } = user;
 
   if (verify) {
